@@ -1,0 +1,43 @@
+#!/bin/bash
+
+case "$2" in
+    a)
+        format='a'
+        opts=(
+                'BasedOnStyle: LLVM'
+                'DerivePointerBinding: false'
+                'PointerBindsToType: true'
+                'BreakBeforeBraces: Allman'
+                'UseTab: Never'
+             )
+    ;;
+    b)
+        format='b'
+        opts=(
+                'BasedOnStyle: LLVM'
+                'DerivePointerBinding: false'
+                'PointerBindsToType: false'
+                'BreakBeforeBraces: Attach'
+                'UseTab: Always'
+             )
+    ;;
+    *)
+        echo "Use format a or b"
+        rm -f out_a.cpp out_b.cpp
+        exit 1
+    ;;
+esac
+
+if [[ -z "$1" ]]; then
+    echo "no file selected"
+    exit 1
+fi
+
+
+opts_concat=""
+for opt in "${opts[@]}"; do
+    opts_concat+="$opt, "
+done
+
+/usr/bin/clang-format-3.5 "-style={$opts_concat}" "$1" > "out_${format}.cpp"
+exit $?
